@@ -2,20 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using MoviesApplication.Data.Interfaces;
 using MoviesApplication.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace MoviesApplication.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly IMovieServices _service;
-        public MoviesController(IMovieServices service)
+        private readonly IMovieRepository _repo;
+        //private readonly UserManager<ApplicationUser> _userManager;
+        public MoviesController(IMovieRepository repo)
         {
-            _service = service;
+            _repo = repo;
         }
         // GET: MoviesController
         public async Task<ActionResult> Index()
         {
-            IEnumerable<Movie> moviesList = await _service.GetAllAsync();
+            IEnumerable<Movie> moviesList = await _repo.GetAllAsync();
             return View(moviesList);
         }
 
@@ -34,58 +37,66 @@ namespace MoviesApplication.Controllers
         // POST: MoviesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Movie movie)
         {
-            try
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userId == null)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
+                TempData["error"] = "Login First !!";
                 return View();
             }
+            movie.ApplicationUserId = userId;
+            if(await _repo.AddAsync(movie))
+                TempData["success"] = "Movie created Successfully";
+            return View();
         }
 
         // GET: MoviesController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            Movie movie = await _repo.GetByIdAsync(id);
+            if (movie == null)
+            {
+                TempData["error"] = "Data Not Found!!";
+                return View();
+            }
+            return View(movie);
         }
 
         // POST: MoviesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Update(int id,[Bind("Id","Name","Poster_Image","Release_Date")] Movie movie)
         {
-            try
+            if(id == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+            if(ModelState.IsValid)
             {
-                return View();
+                if(_repo.UpdateAsync(movie))
+                {
+                    TempData["success"] = "Update Successful !!";
+                    return View();
+                }
             }
-        }
-
-        // GET: MoviesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
+            TempData["error"] = "Failed to Update !!";
+            return View("Edit");
         }
 
         // POST: MoviesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id)
         {
-            try
+            bool isDeleted =await _repo.DeleteAsync(id);
+            if (isDeleted)
             {
+                TempData["success"] = "Movie Successfully deleted!!";
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            TempData["error"] = "Failed to delete movie!!";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

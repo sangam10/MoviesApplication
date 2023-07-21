@@ -1,0 +1,70 @@
+﻿@using MoviesApplication.Models
+@model Movie
+@{
+    ViewData["Title"] = "Create Movie Page";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Create New Movie</h3>
+                <a href="@Url.Action("Index", "Movies")" class="btn btn-outline-success">All Movies</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" asp-controller="Movies" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="form-label">Name</label>
+                                    <input asp-for="Name" class="form-control" placeholder="Movie Name" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Short_Desc" class="form-label">Detail</label>
+                                    <textarea asp-for="Short_Desc" class="form-control" rows="4" placeholder="Movie Description"></textarea>
+                                    <span asp-validation-for="Short_Desc" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Release_Date" class="form-label">Release Date</label>
+                                    <input asp-for="Release_Date" class="form-control" type="date" />
+                                    <span asp-validation-for="Release_Date" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <button type="submit" class="btn btn-outline-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Poster_Image" class="form-label">Poster Image</label>
+                            <input asp-for="Poster_Image" class="form-control" placeholder="Image URL.." id="urlInput" />
+                            <span asp-validation-for="Poster_Image" class="text-danger"></span>
+                            <div class="col col-md-12 mt-2">
+                                <img class="" src="" height="170" id="imagePreview" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+        <script>
+            $(document).ready(function(){
+                $("#urlInput").on("keyup",function(){
+                    $("#imagePreview").attr("src",this.value)
+                })
+            })
+        </script>
+}

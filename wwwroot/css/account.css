@@ -1,0 +1,12 @@
+﻿body {
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background-color:#fff;
+}
+.account_card{
+    width:400px;
+    border-top:10px solid #00d;
+    border-radius:10px;
+}

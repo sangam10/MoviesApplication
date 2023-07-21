@@ -1,0 +1,62 @@
+﻿@model MoviesApplication.Models.Movie
+
+@{
+    ViewData["Title"] = "Edit Movie Page";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <h3>Edit Movie</h3>
+                <a href="/Movies/Index" class="btn btn-outline-success">All Movies</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="/Movies/Update/@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col col-md-6" id="fillform">
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <label class="form-label">Name</label>
+                                <input class="form-control" type="text" asp-for="Name" placeholder="Movie Name" value="@Model.Name" />
+                            </div>
+                            <div class="col col-md-12">
+                                <label class="form-label">Detail</label>
+                                <textarea class="form-control" type="text" cols="6" asp-for="Short_Desc" placeholder="Movie Description">@Model.Short_Desc</textarea>
+                            </div>
+                            <div class="col col-md-12">
+                                <label class="form-label">Release Date</label>
+                                <input class="form-control" id="datepicker" asp-for="Release_Date" type="date" data-id="@Model.Release_Date" />
+                            </div>
+                            <div class="col col-md-12 mt-2">
+                                <button class="btn btn-outline-primary" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-md-6">
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <label class="form-label">Poster Image</label>
+                                <input class="form-control" type="text" asp-for="Poster_Image" placeholder="Image URL.." value="@Model.Poster_Image" id="urlInput" />
+                            </div>
+                            <div class="col col-md-12 mt-2">
+                                <img class="" src="@Model.Poster_Image" height="170" id="imagePreview" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#urlInput").on("keyup", function () {
+                $("#imagePreview").attr("src", this.value)
+            })
+        })
+    </script>
+}

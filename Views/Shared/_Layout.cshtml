@@ -11,8 +11,8 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MoviesApplication</a>
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Movies" asp-action="Index">MoviesApplication</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,12 +20,38 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Movies" asp-action="Index">Movies</a>
                         </li>
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        </li>*@
                     </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @User.Identity.Name
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item nav-link text-dark" href="#">Setting</a></li>
+                            <form asp-action="Logout" asp-controller="Account">
+                                @Html.AntiForgeryToken()
+                                <li><button class="dropdown-item nav-link text-dark" type="submit">Logout</button></li>
+                            </form>
+                        </ul>
+                    </div>
+                    }
+                    else
+                    {
+                    <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a asp-action="Login" asp-controller="Account" class="nav-link text-dark">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Register" asp-controller="Account" class="nav-link text-dark">Register</a>
+                            </li>
+                    </ul>
+                    }
                 </div>
             </div>
         </nav>
@@ -44,6 +70,23 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        if ('@TempData["success"]' != '') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "@TempData["success"]",
+            })
+        }
+        if ('@TempData["error"]' != '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!!',
+                text: "@TempData["error"]",
+            })
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

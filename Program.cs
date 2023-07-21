@@ -19,7 +19,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<MoviesAppContext>();
 
 //service constainer
-builder.Services.AddScoped<IMovieServices, MovieServices>();
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
         
 
 var app = builder.Build();
@@ -41,9 +41,10 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Movies}/{action=Index}/{id?}");
 
 //seed roles
 DataSeeder.UserRolesSeed(app);
+DataSeeder.seed(app);
 
 app.Run();
