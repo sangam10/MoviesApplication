@@ -28,7 +28,7 @@ namespace MoviesApplication.Data.Repository
 
         public async Task<Rating> GetByIdAsync(int? id)
         {
-            return await _context.Ratings.FirstOrDefaultAsync(m => m.Id == id);
+            return await _context?.Ratings?.FirstOrDefaultAsync(m => m.Id == id);
         }
         public async Task<bool> UpdateAsync(Rating rating)
         {

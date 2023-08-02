@@ -158,13 +158,11 @@ public class MoviesController : Controller
         try
         {
             Movie movie = await _movieRepository.GetByIdWithRatingsAndCommentsAsync(id);
-            /*List<Comment>? comments = movie?.Comments?.OrderByDescending(c => c.Id).ToList();
-            List<Rating>? ratings = movie?.Ratings?.OrderByDescending(r => r.Id).ToList();*/
             MovieVM movieVM = new()
             {
                 Movie = movie,
                 Ratings = movie.Ratings != null ? movie.Ratings.ToList() : new List<Rating>(),
-                Comments = movie.Comments != null ? movie.Comments.ToList() : new List<Comment>()
+                Comments = movie.Comments != null ? movie.Comments.OrderByDescending(c=>c.Id).ToList() : new List<Comment>()
             };
             bool IsRated = _rating.HasRated(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
             RatingVM ratingVm = new();
@@ -183,6 +181,7 @@ public class MoviesController : Controller
             MovieDetailsVM movieDetailsVM = new()
             {
                 MovieVM = movieVM,
+                RatingVM = ratingVm
             };
             Console.WriteLine(movieDetailsVM.MovieVM.AverageRating);
             /*Console.WriteLine(movie.Creator.UserName);*/
