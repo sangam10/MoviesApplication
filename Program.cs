@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MoviesApplication.Data;
 using MoviesApplication.Data.Interfaces;
+using MoviesApplication.Data.Repository;
 using MoviesApplication.Data.Services;
 using MoviesApplication.Models;
 
@@ -20,7 +21,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 
 //service constainer
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
-        
+builder.Services.AddScoped<IRating, RatingRepository>();
+builder.Services.AddScoped<IComment, CommentRepository>();
+
 
 var app = builder.Build();
 

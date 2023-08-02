@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using MoviesApplication.Data.Static
-@model IEnumerable<Movie>
+@model MoviesApplication.Models.ViewModels.MoviesVM
 
 @{
     ViewData["Title"] = "List of Movies";
@@ -10,39 +10,50 @@
 <div class="container">
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-center">
                 <h3>All Movies List</h3>
+                <form asp-controller="Movies" asp-action="Index" method="get">
+                    <div class="d-flex align-items-center" style="height:24px;width:350px;">
+                        <input class="form-control" asp-for="@Model.MovieName" placeholder="Search.." />
+                        <label class="form-label mb-0"><button class="btn" type="submit">Search</button></label>
+                    </div>
+                </form>
                 @if (User.Identity.IsAuthenticated && User.IsInRole(UserRoles.ADMIN))
                 {
                     <div class="d-flex">
                         <a asp-controller="Movies" asp-action="Create" class="btn btn-outline-success me-1">Add New</a>
-                        <button class="btn btn-outline-danger" id="deleteSelected">Delete Selected</button>
+                        <button class="btn btn-outline-danger" id="deleteSelected" type="submit">Delete Selected</button>
+                        <form action="/Movies/delete-selected-movie" id="delete-selected-movie-form" method="post">
+                            @Html.AntiForgeryToken()
+                        </form>
                     </div>
                 }
             </div>
         </div>
         <div class="card-body">
-            @if (Model.Any())
+            @if (Model.Movies.Any())
             {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th><input class="form-check-input me-1" type="checkbox" id="select-all-movies"><span>Select All</span></th>
+                            <th><input class="form-check-input me-1" type="checkbox" id="select-all-movies" autocomplete="off"><span>Select All</span></th>
                             <th>No.</th>
                             <th>Poster Image</th>
                             <th>Movie Name</th>
+                            <th>Average Rating</th>
                             <th>Release Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var movie in Model)
+                        @foreach (var movie in Model.Movies)
                         {
                             <tr>
-                                <td><input class="form-check-input me-1 movie-checkbox" type="checkbox"></td>
+                                <td><input class="form-check-input me-1 movie-checkbox" type="checkbox" value="@movie.Id" autocomplete="off"></td>
                                 <td>@(++i)</td>
-                                <td><img src="@movie.Poster_Image" height="100" width="100" /></td>
+                                <td><img src="@movie.Poster_Image" height="50" width="50" /></td>
                                 <td>@movie.Name</td>
+                                <td></td>
                                 <td>@movie.Release_Date</td>
                                 <td>
                                     <a href="@Url.Action("Details", "Movies", new { id = movie.Id })" class="btn btn-outline-primary">view</a>
@@ -50,7 +61,7 @@
                                     {
                                         <a href="@Url.Action("Edit", "Movies", new { id = movie.Id })" class="btn btn-outline-success">Edit</a>
                                         <button class="btn btn-outline-danger delete-movie" data-id="@movie.Id">Delete</button>
-                                        <form id="delete-movie-@movie.Id" action="Movies/Delete/@movie.Id" method="post">
+                                        <form id="delete-movie-form-@movie.Id" action="/Movies/Delete/@movie.Id" method="post">
                                             @Html.AntiForgeryToken()
                                         </form>
                                     }
@@ -93,7 +104,7 @@
             $(".delete-movie").on('click', function (event) {
                 event.preventDefault();
                 var id = $(this).attr("data-id");
-                var form = $("#delete-movie-" + id);
+                var form = $("#delete-movie-form-" + id);
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "You won't be able to revert this!",
@@ -107,6 +118,32 @@
                         form.submit();
                     }
                 });
+            });
+            //delete selected movies
+            $("#deleteSelected").on("click", function () {
+                event.preventDefault()
+                $('#delete-selected-movie-form input[name="movie_ids[]"]').remove();
+                $(".movie-checkbox").each(function () {
+                    if (this.checked) {
+                        var input = `<input type="hidden" name="movie_ids[]" value="${this.value}">`;
+                        $('#delete-selected-movie-form').append(input)
+                    }
+                })
+                var inputsNo = $('#delete-selected-movie-form input[type="hidden"][name="movie_ids[]"]').length
+                if (inputsNo > 0)
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: " !",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $('#delete-selected-movie-form').submit()
+                        }
+                    })
             });
         });
     </script>

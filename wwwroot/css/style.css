@@ -1,0 +1,11 @@
+﻿
+/*css form rating*/
+.rating span:hover
+{
+    cursor:pointer;
+}
+
+input.form-control:focus, textarea.form-control:focus {
+    box-shadow: none;
+    border: 2px solid var(--bs-success);
+}

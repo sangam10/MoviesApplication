@@ -26,11 +26,14 @@ namespace MoviesApplication.Models
         public DateTime Updated_at { get; set; } = DateTime.Now;
 
         //relationship
-        public string ApplicationUserId { get; set; }
+        public string ? ApplicationUserId { get; set; }
 
         [ForeignKey("ApplicationUserId")]
-        public ApplicationUser Creator { get; set; }
+        public ApplicationUser? Creator { get; set; }
 
+        //movies has many comments
+        public ICollection<Rating> ? Ratings { get; set; }
+        public ICollection<Comment> ? Comments { get; set; }
     }
 }
     

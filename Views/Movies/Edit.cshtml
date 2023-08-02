@@ -24,7 +24,7 @@
                             </div>
                             <div class="col col-md-12">
                                 <label class="form-label">Detail</label>
-                                <textarea class="form-control" type="text" cols="6" asp-for="Short_Desc" placeholder="Movie Description">@Model.Short_Desc</textarea>
+                                <input class="form-control" type="text" cols="6" asp-for="Short_Desc" placeholder="Movie Description" value="@Model.Short_Desc"/>
                             </div>
                             <div class="col col-md-12">
                                 <label class="form-label">Release Date</label>
@@ -54,7 +54,7 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $("#urlInput").on("keyup", function () {
+            $("#urlInput").on("focusout", function () {
                 $("#imagePreview").attr("src", this.value)
             })
         })

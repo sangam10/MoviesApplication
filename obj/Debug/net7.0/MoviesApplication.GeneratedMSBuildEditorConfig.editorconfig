@@ -9,65 +9,65 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MoviesApplication
 build_property.RootNamespace = MoviesApplication
-build_property.ProjectDir = c:\Users\sanga\OneDrive\Desktop\dotnet\MoviesApplication\
+build_property.ProjectDir = C:\Users\sanga\OneDrive\Desktop\dotnet\MoviesApplication\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = c:\Users\sanga\OneDrive\Desktop\dotnet\MoviesApplication
+build_property.MSBuildProjectDirectory = C:\Users\sanga\OneDrive\Desktop\dotnet\MoviesApplication
 build_property._RazorSourceGeneratorDebug = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/Login.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/Register.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/RegisterCompleted.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Account/RegisterCompleted.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3RlckNvbXBsZXRlZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Home/Index.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Home/Privacy.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Create.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aWVzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Details.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aWVzXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Edit.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aWVzXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Index.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Movies/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW92aWVzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/Error.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/_ViewImports.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/_ViewStart.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/_Layout.cshtml]
+[C:/Users/sanga/OneDrive/Desktop/dotnet/MoviesApplication/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-o9til9jzy8

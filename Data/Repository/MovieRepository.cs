@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MoviesApplication.Data.Base;
 using MoviesApplication.Data.Interfaces;
 using MoviesApplication.Models;
@@ -12,45 +13,52 @@ namespace MoviesApplication.Data.Services
         {
             _context= context;
         }
+
         public async Task<bool> AddAsync(Movie movie)
         {
-            var newMovie = await _context.Movies.AddAsync(movie);
-            if (newMovie != null)
-            {
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
+            await _context.Movies.AddAsync(movie);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Movie movie)
         {
-            var movie =await _context.Movies.FindAsync(id);
-            if(movie != null)
-            {
-                _context.Movies.Remove(movie);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
+            _context.Movies.Remove(movie);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<IEnumerable<Movie>> GetAllAsync() => await _context.Movies.ToListAsync();
-         
+        public async Task<IEnumerable<Movie>> FindMoviesByName(string name)
+        {
+            var movies =  await _context.Movies.Where(m=>m.Name.Contains(name)).ToListAsync();
+            return movies;
+        }
+
+        public async Task<ICollection<Movie>> GetAllAsync()
+        {
+           return await _context.Movies.OrderByDescending(x => x.Id).ToListAsync();
+        }
 
         public async Task<Movie> GetByIdAsync(int id)
         {
-           var movie =  await _context.Movies.FindAsync(id);
-            return movie;
+            return await _context.Movies.Include(m => m.Creator)
+                .Include(m=>m.Ratings)
+                .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public bool UpdateAsync(Movie movie)
+        public async Task<Movie> GetByIdWithRatingsAndCommentsAsync(int id)
         {
-            movie.Updated_at= DateTime.Now;
-            var updatedMovie = _context.Update(movie);
-            if(updatedMovie.GetType() == typeof(Movie))
-                return true;
-            return false;
+            return await _context.Movies.Include(m => m.Creator)
+                .Include(m => m.Ratings)
+                .Include(m => m.Comments)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<bool> UpdateAsync(Movie movie)
+        {
+            _context.Movies.Update(movie);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

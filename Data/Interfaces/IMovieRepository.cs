@@ -4,11 +4,13 @@ using MoviesApplication.Models;
 namespace MoviesApplication.Data.Interfaces
 {
     public interface IMovieRepository
-    {
-        Task<IEnumerable<Movie>> GetAllAsync();
+    { 
+        Task<ICollection<Movie>> GetAllAsync();
         Task<Movie> GetByIdAsync(int id);
+        Task<Movie> GetByIdWithRatingsAndCommentsAsync(int id);
         Task<bool> AddAsync(Movie movie);
-        bool UpdateAsync(Movie movie);
-        Task<bool> DeleteAsync(int id);
+        Task<bool> UpdateAsync(Movie movie);
+        Task<bool> DeleteAsync(Movie movie);
+        Task<IEnumerable<Movie>> FindMoviesByName(string name);
     }
 }

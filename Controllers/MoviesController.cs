@@ -1,102 +1,210 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MoviesApplication.Data.Interfaces;
+﻿
+using MoviesApplication.Data;
 using MoviesApplication.Models;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using MoviesApplication.Data.Static;
+using MoviesApplication.Data.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using MoviesApplication.Models.ViewModels;
+using MoviesApplication.Data.Repository;
+using System.Linq;
+using Microsoft.IdentityModel.Tokens;
 
-namespace MoviesApplication.Controllers
+namespace MoviesApplication.Controllers;
+
+public class MoviesController : Controller
 {
-    public class MoviesController : Controller
+    private readonly MoviesAppContext _context;
+    private readonly IMovieRepository _movieRepository;
+    private readonly IRating _rating;
+
+    public MoviesController(MoviesAppContext context, IMovieRepository movieRepository,IRating rating)
     {
-        private readonly IMovieRepository _repo;
-        //private readonly UserManager<ApplicationUser> _userManager;
-        public MoviesController(IMovieRepository repo)
+        _context = context;
+        _movieRepository = movieRepository;
+        _rating = rating;
+    }
+    public async Task<IActionResult> Index(MoviesVM vm)
+    {
+        if (!vm.MovieName.IsNullOrEmpty())
         {
-            _repo = repo;
-        }
-        // GET: MoviesController
-        public async Task<ActionResult> Index()
-        {
-            IEnumerable<Movie> moviesList = await _repo.GetAllAsync();
-            return View(moviesList);
-        }
-
-        // GET: MoviesController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: MoviesController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: MoviesController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Movie movie)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(userId == null)
+            var movies = await _movieRepository.FindMoviesByName(vm.MovieName);
+            MoviesVM moviesVM = new()
             {
-                TempData["error"] = "Login First !!";
-                return View();
-            }
-            movie.ApplicationUserId = userId;
-            if(await _repo.AddAsync(movie))
-                TempData["success"] = "Movie created Successfully";
-            return View();
+                Movies = (List<Movie>)movies,
+                MovieName = vm.MovieName
+            };
+            return View(moviesVM);
         }
-
-        // GET: MoviesController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        else
         {
-            Movie movie = await _repo.GetByIdAsync(id);
-            if (movie == null)
+            var movies = await _movieRepository.GetAllAsync();
+            MoviesVM moviesVM = new()
             {
-                TempData["error"] = "Data Not Found!!";
-                return View();
+                Movies = (List<Movie>)movies
+            };
+        return View(moviesVM);
+        }
+    }
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var movie = await _movieRepository.GetByIdAsync(id);
+        if (movie == null)
+            return NotFound();
+        Console.WriteLine(movie?.Creator?.UserName);
+        return View(movie);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public async Task<IActionResult> Create(Movie movie)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                movie.ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _movieRepository.AddAsync(movie);
+                TempData["success"] = "Movie Created Successfully!!";
             }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.ToString();
+                return View(movie);
+            }
+        }
+        else
+        {
+            TempData["error"] = "Failed to Create!!";
             return View(movie);
         }
+        return RedirectToAction(nameof(Index));
+    }
 
-        // POST: MoviesController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Update(int id,[Bind("Id","Name","Poster_Image","Release_Date")] Movie movie)
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        Console.WriteLine("movie delete");
+        var movie = await _movieRepository.GetByIdAsync(id);
+        if (movie == null)
         {
-            if(id == null)
-            {
-                return NotFound();
-            }
-            if(ModelState.IsValid)
-            {
-                if(_repo.UpdateAsync(movie))
-                {
-                    TempData["success"] = "Update Successful !!";
-                    return View();
-                }
-            }
-            TempData["error"] = "Failed to Update !!";
-            return View("Edit");
+            return NotFound();
         }
-
-        // POST: MoviesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id)
+        try
         {
-            bool isDeleted =await _repo.DeleteAsync(id);
-            if (isDeleted)
-            {
-                TempData["success"] = "Movie Successfully deleted!!";
-                return RedirectToAction(nameof(Index));
-            }
-            TempData["error"] = "Failed to delete movie!!";
+            await _movieRepository.DeleteAsync(movie);
+            await _context.SaveChangesAsync();
+            TempData["success"] = "Movie deleted Successfully!!";
             return RedirectToAction(nameof(Index));
         }
+        catch (Exception e)
+        {
+            Console.Write("error is =>" + e);
+        }
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = UserRoles.ADMIN)]
+    public async Task<IActionResult> Update(int id, Movie movie)
+    {
+
+        if (id != movie.Id)
+        {
+            return NotFound();
+        }
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                movie.ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _movieRepository.UpdateAsync(movie);
+                TempData["success"] = "successfully updated";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                Console.WriteLine("error is :" + e);
+                TempData["error"] = "Failed to update";
+            }
+        }
+        return View(movie);
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        try
+        {
+            Movie movie = await _movieRepository.GetByIdWithRatingsAndCommentsAsync(id);
+            List<Comment> ? comments = movie?.Comments?.OrderByDescending(c=>c.Id).ToList();
+            List<Rating> ? ratings = movie?.Ratings?.OrderByDescending(r=>r.Id).ToList();
+            bool IsRated = _rating.HasRated(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
+            RatingVM ratingVm = new ();
+
+            if (IsRated)
+            {
+                Rating rating = await _rating.FindRatingToMovieUser(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
+                ratingVm = new RatingVM()
+                {
+                    Rating = rating,
+                    MovieId= id,
+                };
+            }
+            if (movie == null)
+                return NotFound();
+            MovieDetailsVM movieDetailsVM = new ()
+            {
+                Movie = movie,
+                Comments = comments,
+                Ratings = ratings,
+                RatingVM = ratingVm
+            };
+            Console.WriteLine(movieDetailsVM.AverageRating);
+            /*Console.WriteLine(movie.Creator.UserName);*/
+            return View(movieDetailsVM);
+        }
+        catch (Exception e)
+        {
+            TempData["error"] = e.Message;
+            return RedirectToAction(nameof(Index));
+        }
+     }
+    [HttpPost]
+    [Route("/Movies/delete-selected-movie")]
+    public async Task<IActionResult> SelectedDelete(string[] movie_ids)
+    {
+        try
+        {
+
+            foreach (string idString in movie_ids)
+            {
+                if (int.TryParse(idString, out int id))
+                {
+                    Movie movie = await _movieRepository.GetByIdAsync(id);
+                    await _movieRepository.DeleteAsync(movie);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            TempData["error"] = e.Message;
+            return RedirectToAction("Index", "Movies");
+        }
+        TempData["success"] = "Successfully Deleted !!";
+        return RedirectToAction("Index", "Movies");
     }
 }
