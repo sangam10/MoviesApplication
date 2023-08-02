@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="card-body">
-            @if (Model.Movies.Any())
+            @if (Model.MovieVMS.Any())
             {
                 <table class="table">
                     <thead>
@@ -46,22 +46,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var movie in Model.Movies)
+                        @foreach (var movie in Model.MovieVMS)
                         {
                             <tr>
-                                <td><input class="form-check-input me-1 movie-checkbox" type="checkbox" value="@movie.Id" autocomplete="off"></td>
+                                <td><input class="form-check-input me-1 movie-checkbox" type="checkbox" value="@movie.Movie.Id" autocomplete="off"></td>
                                 <td>@(++i)</td>
-                                <td><img src="@movie.Poster_Image" height="50" width="50" /></td>
-                                <td>@movie.Name</td>
-                                <td></td>
-                                <td>@movie.Release_Date</td>
+                                <td><img src="@movie.Movie.Poster_Image" height="50" width="50" /></td>
+                                <td>@movie.Movie.Name</td>
+                                <td>@movie.AverageRating</td>
+                                <td>@movie.Movie.Release_Date</td>
                                 <td>
-                                    <a href="@Url.Action("Details", "Movies", new { id = movie.Id })" class="btn btn-outline-primary">view</a>
+                                    <a href="@Url.Action("Details", "Movies", new { id = movie.Movie.Id })" class="btn btn-outline-primary">view</a>
                                     @if (User.Identity.IsAuthenticated && User.IsInRole(UserRoles.ADMIN))
                                     {
-                                        <a href="@Url.Action("Edit", "Movies", new { id = movie.Id })" class="btn btn-outline-success">Edit</a>
-                                        <button class="btn btn-outline-danger delete-movie" data-id="@movie.Id">Delete</button>
-                                        <form id="delete-movie-form-@movie.Id" action="/Movies/Delete/@movie.Id" method="post">
+                                        <a href="@Url.Action("Edit", "Movies", new { id = movie.Movie.Id })" class="btn btn-outline-success">Edit</a>
+                                        <button class="btn btn-outline-danger delete-movie" data-id="@movie.Movie.Id">Delete</button>
+                                        <form id="delete-movie-form-@movie.Movie.Id" action="/Movies/Delete/@movie.Movie.Id" method="post">
                                             @Html.AntiForgeryToken()
                                         </form>
                                     }

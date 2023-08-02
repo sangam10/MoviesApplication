@@ -7,6 +7,7 @@ namespace MoviesApplication.Models.ViewModels
         public Movie Movie { get; set; } =  new Movie();
 
         public List<Rating> Ratings { get; set; } = new List<Rating>();
+        public List<Comment> Comments { get; set; } = new List<Comment>();
         public double AverageRating
         {
             get

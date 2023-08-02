@@ -28,7 +28,7 @@
                                         <textarea class="form-control" rows="4"
                                                   style="background: #f7f6f6;" asp-for="@Model.CommentVM.Comment.Text"></textarea>
                                         @*<input class="form-control" type="hidden" asp-for="@Model.RatingAndCommentVM.Rating.Stars" id="ratingInput" value="0" />*@
-                                        <input class="form-control" type="hidden" asp-for="@Model.CommentVM.MovieId" value="@Model.Movie.Id" />
+                                        <input class="form-control" type="hidden" asp-for="@Model.CommentVM.MovieId" value="@Model.MovieVM.Movie.Id" />
                                     </div>
                                 </div>
                                 <div class="float-end mt-2">
@@ -36,9 +36,9 @@
                                 </div>
                             </form>
                         </div>
-                        @if (Model?.Comments?.Any() == true)
+                        @if (Model?.MovieVM.Comments?.Any() == true)
                         {
-                            foreach (Comment comment in Model.Comments)
+                            foreach (Comment comment in Model.MovieVM.Comments)
                             {
                                 <div class="card-body">
                                     <div class="d-flex flex-start align-items-center">
@@ -80,7 +80,7 @@
                                     <form asp-controller="Rating" asp-action="Create" method="post" id="rating-form">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" asp-for="@Model.RatingVM.Rating.Stars" id="ratingStar" />
-                                        <input type="hidden" asp-for="@Model.RatingVM.MovieId" value="@Model.Movie.Id" />
+                                        <input type="hidden" asp-for="@Model.RatingVM.MovieId" value="@Model?.MovieVM.Movie.Id" />
                                     </form>
                                     @{
                                         int? ratings = Model?.RatingVM.Rating.Stars;

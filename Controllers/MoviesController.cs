@@ -21,7 +21,7 @@ public class MoviesController : Controller
     private readonly IMovieRepository _movieRepository;
     private readonly IRating _rating;
 
-    public MoviesController(MoviesAppContext context, IMovieRepository movieRepository,IRating rating)
+    public MoviesController(MoviesAppContext context, IMovieRepository movieRepository, IRating rating)
     {
         _context = context;
         _movieRepository = movieRepository;
@@ -29,24 +29,32 @@ public class MoviesController : Controller
     }
     public async Task<IActionResult> Index(MoviesVM vm)
     {
+        MoviesVM moviesVM = new();
         if (!vm.MovieName.IsNullOrEmpty())
         {
             var movies = await _movieRepository.FindMoviesByName(vm.MovieName);
-            MoviesVM moviesVM = new()
+
+            moviesVM.MovieVMS = movies.Select(movie => new MovieVM()
             {
-                Movies = (List<Movie>)movies,
-                MovieName = vm.MovieName
-            };
+                Movie = movie,
+                Ratings = movie.Ratings != null ? movie.Ratings.ToList() : new List<Rating>()
+            }).ToList();
+
+            moviesVM.MovieName = vm.MovieName;
+
             return View(moviesVM);
         }
         else
         {
             var movies = await _movieRepository.GetAllAsync();
-            MoviesVM moviesVM = new()
+
+            moviesVM.MovieVMS = movies.Select(movie => new MovieVM()
             {
-                Movies = (List<Movie>)movies
-            };
-        return View(moviesVM);
+                Movie = movie,
+                Ratings = movie.Ratings != null ? movie.Ratings.ToList() : new List<Rating>()
+            }).ToList();
+           
+            return View(moviesVM);
         }
     }
     [Authorize(Roles = UserRoles.ADMIN)]
@@ -150,10 +158,16 @@ public class MoviesController : Controller
         try
         {
             Movie movie = await _movieRepository.GetByIdWithRatingsAndCommentsAsync(id);
-            List<Comment> ? comments = movie?.Comments?.OrderByDescending(c=>c.Id).ToList();
-            List<Rating> ? ratings = movie?.Ratings?.OrderByDescending(r=>r.Id).ToList();
+            /*List<Comment>? comments = movie?.Comments?.OrderByDescending(c => c.Id).ToList();
+            List<Rating>? ratings = movie?.Ratings?.OrderByDescending(r => r.Id).ToList();*/
+            MovieVM movieVM = new()
+            {
+                Movie = movie,
+                Ratings = movie.Ratings != null ? movie.Ratings.ToList() : new List<Rating>(),
+                Comments = movie.Comments != null ? movie.Comments.ToList() : new List<Comment>()
+            };
             bool IsRated = _rating.HasRated(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
-            RatingVM ratingVm = new ();
+            RatingVM ratingVm = new();
 
             if (IsRated)
             {
@@ -161,19 +175,16 @@ public class MoviesController : Controller
                 ratingVm = new RatingVM()
                 {
                     Rating = rating,
-                    MovieId= id,
+                    MovieId = id,
                 };
             }
             if (movie == null)
                 return NotFound();
-            MovieDetailsVM movieDetailsVM = new ()
+            MovieDetailsVM movieDetailsVM = new()
             {
-                Movie = movie,
-                Comments = comments,
-                Ratings = ratings,
-                RatingVM = ratingVm
+                MovieVM = movieVM,
             };
-            Console.WriteLine(movieDetailsVM.AverageRating);
+            Console.WriteLine(movieDetailsVM.MovieVM.AverageRating);
             /*Console.WriteLine(movie.Creator.UserName);*/
             return View(movieDetailsVM);
         }
@@ -182,7 +193,7 @@ public class MoviesController : Controller
             TempData["error"] = e.Message;
             return RedirectToAction(nameof(Index));
         }
-     }
+    }
     [HttpPost]
     [Route("/Movies/delete-selected-movie")]
     public async Task<IActionResult> SelectedDelete(string[] movie_ids)

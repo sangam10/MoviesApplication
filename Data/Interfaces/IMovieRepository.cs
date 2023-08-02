@@ -11,6 +11,6 @@ namespace MoviesApplication.Data.Interfaces
         Task<bool> AddAsync(Movie movie);
         Task<bool> UpdateAsync(Movie movie);
         Task<bool> DeleteAsync(Movie movie);
-        Task<IEnumerable<Movie>> FindMoviesByName(string name);
+        Task<IEnumerable<Movie>> FindMoviesByName(string? name);
     }
 }

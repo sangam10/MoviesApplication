@@ -28,7 +28,7 @@ namespace MoviesApplication.Data.Services
             return true;
         }
 
-        public async Task<IEnumerable<Movie>> FindMoviesByName(string name)
+        public async Task<IEnumerable<Movie>> FindMoviesByName(string? name)
         {
             var movies =  await _context.Movies.Where(m=>m.Name.Contains(name)).ToListAsync();
             return movies;
@@ -36,14 +36,14 @@ namespace MoviesApplication.Data.Services
 
         public async Task<ICollection<Movie>> GetAllAsync()
         {
-           return await _context.Movies.OrderByDescending(x => x.Id).ToListAsync();
+           return await _context.Movies.Include(m => m.Ratings).OrderByDescending(x => x.Id).ToListAsync();
         }
 
         public async Task<Movie> GetByIdAsync(int id)
         {
             return await _context.Movies.Include(m => m.Creator)
                 .Include(m=>m.Ratings)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id) ?? new Movie();
         }
 
         public async Task<Movie> GetByIdWithRatingsAndCommentsAsync(int id)
@@ -51,7 +51,7 @@ namespace MoviesApplication.Data.Services
             return await _context.Movies.Include(m => m.Creator)
                 .Include(m => m.Ratings)
                 .Include(m => m.Comments)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id) ?? new Movie();
         }
 
         public async Task<bool> UpdateAsync(Movie movie)

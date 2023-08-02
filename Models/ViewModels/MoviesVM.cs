@@ -2,7 +2,7 @@
 {
     public class MoviesVM
     {
-        public List<Movie> Movies { get; set; } = new ();
+        public List<MovieVM> MovieVMS { get; set; } = new ();
         public string? MovieName { get; set; }
     }
 }
